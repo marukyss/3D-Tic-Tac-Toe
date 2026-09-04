@@ -65,9 +65,30 @@ namespace TicTacToe3D
                     Console.Clear();
                     engine.Board.DisplayGrid();
                     Console.WriteLine($"It is {engine.CurrentPlayer.Name}'s (Symbol: {engine.CurrentPlayer.Symbol}) turn.");
-                    int x = ReadInt("Enter the first coordinate(x): ", 0, boardSize-1);
-                    int y = ReadInt("Enter the second coordinate(y): ", 0, boardSize-1);
-                    int z = ReadInt("Enter the third coordinate(z): ", 0, boardSize-1);
+
+                    int x=-1, y=-1, z=-1;                   
+                    bool validCoordinatesFlag=false;
+
+                    while(!validCoordinatesFlag)
+                    {
+                        Console.WriteLine("Enter the coordinates (z, y, x): "); 
+                        string? coordinates = Console.ReadLine()?.Trim();
+                        string[] parts = coordinates.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+                        if(parts.Length == 3 &&
+                            int.TryParse(parts[0], out int layerInput) &&
+                            char.TryParse(parts[1], out char yChar) &&
+                            char.TryParse(parts[2], out char xChar))
+                        {
+                            x = xChar - 'A';
+                            y = yChar - 'a';
+                            z = layerInput-1;
+                            if(x>= 0 && x<boardSize && y>= 0 && y<boardSize && z>= 0 && z<boardSize) validCoordinatesFlag=true;
+                            else Console.WriteLine("Coordinates are out of bounds. Try again.");
+                        } else {
+                            Console.WriteLine("Invalid format. Expected format: '[int] [lowercaseChar] [uppercaseChar]'");
+                        }
+                    }
 
                     if(!engine.MakeMove(x, y, z))
                     {

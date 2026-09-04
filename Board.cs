@@ -34,8 +34,15 @@ namespace TicTacToe3D
         
         public void DisplayGrid(){
             for(int z=0; z<Size; ++z){
-                System.Console.WriteLine($"Layer {z} (z={z})");
+                Console.WriteLine($"Layer {z+1} (z={z+1})");
+                Console.Write("   ");
+                for(int i=0; i<Size; ++i)
+                {
+                    Console.Write($"{(char) (i+'A')}   ");
+                }
+                Console.WriteLine();
                 for(int y=0; y<Size; ++y){
+                    Console.Write($"{(char)(y+'a')} ");
                     for(int x=0; x<Size; ++x){
                         char symbol=GetCell(x, y, z);
                         Console.Write($" {symbol} ");
@@ -43,6 +50,7 @@ namespace TicTacToe3D
                     }
                     if(y!=Size-1){
                         Console.WriteLine();
+                        Console.Write("  ");
                         for(int l=0; l<Size; ++l){
                             if(l!=Size-1) Console.Write("---+");
                             else Console.Write("---");
