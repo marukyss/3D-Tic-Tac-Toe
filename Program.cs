@@ -7,10 +7,12 @@ namespace TicTacToe3D
     {
         public string Name { get; }
         public char Symbol { get; }
+        public ConsoleColor Color { get; }
 
-        public Player(string name, char symbol){
+        public Player(string name, char symbol, ConsoleColor color){
             Name = name;
             Symbol = symbol;
+            Color = color;
         }
     }
 
@@ -19,6 +21,19 @@ namespace TicTacToe3D
         private static List<Player> SetupPlayers(int playerCount)
         {
             var players = new List<Player>();
+            ConsoleColor[] availableColors =
+            {
+                ConsoleColor.Cyan, 
+                ConsoleColor.Red, 
+                ConsoleColor.Yellow, 
+                ConsoleColor.Green,
+                ConsoleColor.Magenta,
+                ConsoleColor.White,
+                ConsoleColor.DarkYellow,  
+                ConsoleColor.DarkCyan, 
+                ConsoleColor.DarkMagenta,
+                ConsoleColor.Gray 
+            };
 
             for(int i=0; i<playerCount; ++i)
             {
@@ -38,7 +53,8 @@ namespace TicTacToe3D
                     Console.Write("Invalid or taken symbol. Enter a different symbol: ");
                     symbol = Console.ReadLine()?.Trim();
                 }
-                players.Add(new Player(name, char.Parse(symbol)));
+                ConsoleColor assignedColor = availableColors[players.Count % availableColors.Length];
+                players.Add(new Player(name, char.Parse(symbol), assignedColor));
             }
 
             return players;
@@ -63,8 +79,12 @@ namespace TicTacToe3D
                 while (!engine.IsGameOver)
                 {
                     Console.Clear();
-                    engine.Board.DisplayGrid();
-                    Console.WriteLine($"It is {engine.CurrentPlayer.Name}'s (Symbol: {engine.CurrentPlayer.Symbol}) turn.");
+                    engine.Board.DisplayGrid(players);
+                    Console.Write("It is ");
+                    Console.ForegroundColor = engine.CurrentPlayer.Color;
+                    Console.Write($"{engine.CurrentPlayer.Name}'s (Symbol: {engine.CurrentPlayer.Symbol})");
+                    Console.ResetColor();
+                    Console.WriteLine(" turn.");
 
                     int x=-1, y=-1, z=-1;                   
                     bool validCoordinatesFlag=false;
@@ -84,20 +104,29 @@ namespace TicTacToe3D
                             y = yChar - 'a';
                             z = layerInput-1;
                             if(x>= 0 && x<boardSize && y>= 0 && y<boardSize && z>= 0 && z<boardSize) validCoordinatesFlag=true;
-                            else Console.WriteLine("Coordinates are out of bounds. Try again.");
+                            else
+                            {
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine("Coordinates are out of bounds. Try again.");
+                                Console.ResetColor();
+                            } 
                         } else {
+                            Console.ForegroundColor = ConsoleColor.Red;
                             Console.WriteLine("Invalid format. Expected format: '[int] [lowercaseChar] [uppercaseChar]'");
+                            Console.ResetColor();
                         }
                     }
 
                     if(!engine.MakeMove(x, y, z))
                     {
+                        Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine("\n Invalid move! Press any key to try again...");
+                        Console.ResetColor();
                         Console.ReadKey();
                     }
                 }
                 Console.Clear();
-                engine.Board.DisplayGrid();
+                engine.Board.DisplayGrid(players);
 
                 if (engine.Winner != null)
                     Console.WriteLine($"\nCongratulations! {engine.Winner.Name} ({engine.Winner.Symbol}) wins!");
@@ -137,7 +166,9 @@ namespace TicTacToe3D
                 if(input == "y" || input == "yes") return true;
                 if(input == "n" || input == "no") return false;
 
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Invalid input. Please enter 'y' or 'n'.");
+                Console.ResetColor();
             }
         }
         private static void SaveMatchResult(Player Winner, List<Player> players, int boardSize)
@@ -152,8 +183,10 @@ namespace TicTacToe3D
                 Console.WriteLine("\nMatch result saved!");
             }
             catch (Exception ex)
-            {
+            { 
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"Failed to save result. {ex.Message}");
+                Console.ResetColor();
             }
         }
         private static bool IsValidName(string name, List<Player> existingPlayers)
@@ -185,7 +218,9 @@ namespace TicTacToe3D
                 if(int.TryParse(input, out int result) && result>= min && result<=max)
                     return result;
 
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"Invalid input. Please enter an integer between {min} and {max}.");
+                Console.ResetColor();
             }
         }
     }

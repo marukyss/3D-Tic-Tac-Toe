@@ -32,7 +32,7 @@ namespace TicTacToe3D
 
         public bool IsCellEmpty(int x, int y, int z) => GetCell(x, y, z)=='.';
         
-        public void DisplayGrid(){
+        public void DisplayGrid(List<Player> players){
             for(int z=0; z<Size; ++z){
                 Console.WriteLine($"Layer {z+1} (z={z+1})");
                 Console.Write("   ");
@@ -44,8 +44,20 @@ namespace TicTacToe3D
                 for(int y=0; y<Size; ++y){
                     Console.Write($"{(char)(y+'a')} ");
                     for(int x=0; x<Size; ++x){
-                        char symbol=GetCell(x, y, z);
+                        char symbol = GetCell(x, y, z);
+
+                        foreach (Player p in players)
+                        {
+                            if (p.Symbol == symbol)
+                            {
+                                Console.ForegroundColor = p.Color;
+                                break;
+                            }
+                        }
+
                         Console.Write($" {symbol} ");
+                        Console.ResetColor();
+                        
                         if(x!=Size-1) Console.Write("|");
                     }
                     if(y!=Size-1){
