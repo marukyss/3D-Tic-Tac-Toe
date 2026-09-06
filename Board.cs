@@ -33,17 +33,36 @@ namespace TicTacToe3D
         public bool IsCellEmpty(int x, int y, int z) => GetCell(x, y, z)=='.';
         
         public void DisplayGrid(List<Player> players){
-            for(int z=0; z<Size; ++z){
-                Console.WriteLine($"Layer {z+1} (z={z+1})");
-                Console.Write("   ");
-                for(int i=0; i<Size; ++i)
+            int blockWidth = (Size*4) + 5;
+            for (int z=0; z<Size; ++z)
+            {
+                string header = $" Layer {z+1} (z={z+1})"; 
+                 Console.Write(header);
+                 for (int j=0; j<blockWidth-header.Length; ++j)
                 {
-                    Console.Write($"{(char) (i+'A')}   ");
+                    Console.Write(" ");
                 }
-                Console.WriteLine();
-                for(int y=0; y<Size; ++y){
+            }
+            Console.WriteLine();
+
+            for (int z=0; z<Size; ++z)
+            {
+                Console.Write("   ");
+                for (int i=0; i<Size; ++i)
+                {
+                    Console.Write($"{(char)(i+'A')}   ");
+                }
+                Console.Write("  ");   
+            }
+            Console.WriteLine();
+
+            for (int y=0; y<Size; ++y)
+            {
+                for (int z=0; z<Size; ++z)
+                {
                     Console.Write($"{(char)(y+'a')} ");
-                    for(int x=0; x<Size; ++x){
+                    for (int x=0; x<Size; ++x)
+                    {
                         char symbol = GetCell(x, y, z);
 
                         foreach (Player p in players)
@@ -57,22 +76,28 @@ namespace TicTacToe3D
 
                         Console.Write($" {symbol} ");
                         Console.ResetColor();
-                        
-                        if(x!=Size-1) Console.Write("|");
+
+                        if(x<Size-1) Console.Write("|");
                     }
-                    if(y!=Size-1){
-                        Console.WriteLine();
+                    Console.Write("    ");
+                }
+                Console.WriteLine();
+
+                if (y < Size - 1)
+                {
+                    for(int z=0; z<Size; ++z)
+                    {
                         Console.Write("  ");
-                        for(int l=0; l<Size; ++l){
-                            if(l!=Size-1) Console.Write("---+");
-                            else Console.Write("---");
+                        for(int l=0; l<Size; ++l)
+                        {
+                            Console.Write(l<Size-1 ? "---+" : "---");
                         }
+                        Console.Write("    ");
                     }
                     Console.WriteLine();
                 }
-                Console.WriteLine();
             }
-            
+            Console.WriteLine();
         }
 
         public void Clear(){

@@ -42,7 +42,9 @@ namespace TicTacToe3D
                 string name = Console.ReadLine()?.Trim();
                 while (!IsValidName(name, players))
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.Write("Invalid or taken name. Please enter a different name: ");
+                    Console.ResetColor();
                     name = Console.ReadLine()?.Trim();
                 }
 
@@ -50,7 +52,9 @@ namespace TicTacToe3D
                 string symbol = Console.ReadLine()?.Trim();
                 while (!IsValidSymbol(symbol, players))
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.Write("Invalid or taken symbol. Enter a different symbol: ");
+                    Console.ResetColor();
                     symbol = Console.ReadLine()?.Trim();
                 }
                 ConsoleColor assignedColor = availableColors[players.Count % availableColors.Length];
