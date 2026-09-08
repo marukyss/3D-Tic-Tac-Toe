@@ -34,7 +34,19 @@ namespace TicTacToe3D
         
         public void DisplayGrid(List<Player> players){
             int blockWidth = (Size*4) + 5;
-            for (int z=0; z<Size; ++z)
+            int terminalWidth = 80;
+            if(Console.WindowWidth>0) terminalWidth=Console.WindowWidth;
+            int layersPerRow=Math.Max(1, terminalWidth/blockWidth);
+
+            for (int startZ=0; startZ<Size; startZ += layersPerRow)
+            {
+                int endZ = Math.Min(startZ+layersPerRow, Size);
+                DisplayGridRange(startZ, endZ, blockWidth, players);
+            }
+        }
+
+        private void DisplayGridRange(int startZ, int endZ, int blockWidth, List<Player> players){
+            for (int z=startZ; z<endZ; ++z)
             {
                 string header = $" Layer {z+1} (z={z+1})"; 
                  Console.Write(header);
@@ -45,7 +57,7 @@ namespace TicTacToe3D
             }
             Console.WriteLine();
 
-            for (int z=0; z<Size; ++z)
+            for (int z=startZ; z<endZ; ++z)
             {
                 Console.Write("   ");
                 for (int i=0; i<Size; ++i)
@@ -58,7 +70,7 @@ namespace TicTacToe3D
 
             for (int y=0; y<Size; ++y)
             {
-                for (int z=0; z<Size; ++z)
+                for (int z=startZ; z<endZ; ++z)
                 {
                     Console.Write($"{(char)(y+'a')} ");
                     for (int x=0; x<Size; ++x)
@@ -85,7 +97,7 @@ namespace TicTacToe3D
 
                 if (y < Size - 1)
                 {
-                    for(int z=0; z<Size; ++z)
+                    for(int z=startZ; z<endZ; ++z)
                     {
                         Console.Write("  ");
                         for(int l=0; l<Size; ++l)
@@ -99,7 +111,6 @@ namespace TicTacToe3D
             }
             Console.WriteLine();
         }
-
         public void Clear(){
             for(int i=0; i<Size; ++i){
                 for(int j=0; j<Size; ++j){
