@@ -39,7 +39,7 @@ namespace TicTacToe3D
             {
                 Console.WriteLine($"\n --- Player {i+1} Setup ---");
                 Console.Write("Enter player name: ");
-                string name = Console.ReadLine()?.Trim();
+                string? name = Console.ReadLine()?.Trim();
                 while (!IsValidName(name, players))
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
@@ -49,7 +49,7 @@ namespace TicTacToe3D
                 }
 
                 Console.Write("Enter player symbol (single character): ");
-                string symbol = Console.ReadLine()?.Trim();
+                string? symbol = Console.ReadLine()?.Trim();
                 while (!IsValidSymbol(symbol, players))
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
@@ -58,7 +58,7 @@ namespace TicTacToe3D
                     symbol = Console.ReadLine()?.Trim();
                 }
                 ConsoleColor assignedColor = availableColors[players.Count % availableColors.Length];
-                players.Add(new Player(name, char.Parse(symbol), assignedColor));
+                players.Add(new Player(name!, char.Parse(symbol), assignedColor));
             }
 
             return players;
@@ -96,17 +96,47 @@ namespace TicTacToe3D
                     while(!validCoordinatesFlag)
                     {
                         Console.WriteLine("Enter the coordinates (z, y, x): "); 
-                        string? coordinates = Console.ReadLine()?.Trim();
-                        string[] parts = coordinates.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-
-                        if(parts.Length == 3 &&
-                            int.TryParse(parts[0], out int layerInput) &&
-                            char.TryParse(parts[1], out char yChar) &&
-                            char.TryParse(parts[2], out char xChar))
+                        string? coordinates = Console.ReadLine();
+                        if (string.IsNullOrWhiteSpace(coordinates))
                         {
-                            x = xChar - 'A';
-                            y = yChar - 'a';
-                            z = layerInput-1;
+                            Console.ForegroundColor=ConsoleColor.Red;
+                            Console.WriteLine("Invalid format. Input cannot be empty.");
+                            Console.ResetColor();
+                            continue;
+                        }
+                        string[] parts = coordinates.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries); //strips out extra spaces
+                        if(parts.Length != 3)
+                        {
+                            Console.ForegroundColor=ConsoleColor.Red;
+                            Console.WriteLine("Invalid format. Expected exactly 3 coordinates.");
+                            Console.ResetColor();
+                            continue;
+                        }
+                        bool foundX=false, foundY=false, foundZ=false;
+
+                        foreach(string part in parts)
+                        {
+                            if(int.TryParse(part, out int layerInput))
+                            {
+                                z=layerInput-1;
+                                foundZ=true;
+                            } else if(part.Length == 1)
+                            {
+                                char c=part[0];
+                                if (char.IsLower(c))
+                                {
+                                    y=c-'a';
+                                    foundY=true;
+                                } else if (char.IsUpper(c))
+                                {
+                                    x=c-'A';
+                                    foundX=true;
+                                }
+                            }
+                        }
+
+                        if(foundX && foundY && foundZ)
+                        {
                             if(x>= 0 && x<boardSize && y>= 0 && y<boardSize && z>= 0 && z<boardSize) validCoordinatesFlag=true;
                             else
                             {
@@ -116,7 +146,7 @@ namespace TicTacToe3D
                             } 
                         } else {
                             Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine("Invalid format. Expected format: '[int] [lowercaseChar] [uppercaseChar]'");
+                            Console.WriteLine("Invalid format. Must include one integer(z), one lowercase char(y) and one uppercase char(x)");
                             Console.ResetColor();
                         }
                     }
@@ -165,7 +195,7 @@ namespace TicTacToe3D
             while (true)
             {
                 Console.Write(prompt);
-                string input = Console.ReadLine()?.Trim().ToLower();
+                string? input = Console.ReadLine()?.Trim().ToLower();
 
                 if(input == "y" || input == "yes") return true;
                 if(input == "n" || input == "no") return false;
@@ -175,7 +205,7 @@ namespace TicTacToe3D
                 Console.ResetColor();
             }
         }
-        private static void SaveMatchResult(Player Winner, List<Player> players, int boardSize)
+        private static void SaveMatchResult(Player? Winner, List<Player> players, int boardSize)
         {
             //factor out the winner and add the string to the file
             string result = (Winner != null) ? $"Winner: {Winner.Name}" : "Result: Draw";
@@ -193,7 +223,7 @@ namespace TicTacToe3D
                 Console.ResetColor();
             }
         }
-        private static bool IsValidName(string name, List<Player> existingPlayers)
+        private static bool IsValidName(string? name, List<Player> existingPlayers)
         {
             if(string.IsNullOrWhiteSpace(name)) return false;
             for(int i=0; i<existingPlayers.Count; ++i)
@@ -203,7 +233,7 @@ namespace TicTacToe3D
             return true;
         }
 
-        private static bool IsValidSymbol(string symbol, List<Player> existingPlayers)
+        private static bool IsValidSymbol(string? symbol, List<Player> existingPlayers)
         {
             if(!char.TryParse(symbol, out char parsedSymbol) || char.IsWhiteSpace(parsedSymbol)) return false;
             for(int i=0; i<existingPlayers.Count; ++i)
@@ -217,7 +247,7 @@ namespace TicTacToe3D
             while (true)
             {
                 Console.Write(prompt);
-                string input = Console.ReadLine();
+                string? input = Console.ReadLine();
 
                 if(int.TryParse(input, out int result) && result>= min && result<=max)
                     return result;

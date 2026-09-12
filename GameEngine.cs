@@ -3,7 +3,7 @@ namespace TicTacToe3D
     public class GameEngine
     {
         public bool IsGameOver { get; private set; } = false; //to make it impossible for Program.cs to randomly interrupt the game
-        public Player Winner { get; private set; } = null; //to make it impossible for Program.cs to rewrite the winner
+        public Player? Winner { get; private set; } = null; //to make it impossible for Program.cs to rewrite the winner
         private readonly Board board;
         private readonly List<Player> players;
         private int currentPlayerIndex = 0;
